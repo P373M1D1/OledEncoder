@@ -29,14 +29,16 @@ Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 
 #define XPOS 0
 #define YPOS 1
 #define DELTAY 2
-
+#define switch 27
+#define gnd 14
 
 #define LOGO16_GLCD_HEIGHT 16
 #define LOGO16_GLCD_WIDTH  16
 AiEsp32RotaryEncoder rotaryEncoder = AiEsp32RotaryEncoder(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, -1, ROTARY_ENCODER_STEPS);
 byte value;
-
-
+const bool displayCleared = false;
+bool stateSwitch = true;
+bool lastStateSwitch = true;
 void IRAM_ATTR readEncoderISR()
 {
     rotaryEncoder.readEncoder_ISR();
@@ -44,15 +46,14 @@ void IRAM_ATTR readEncoderISR()
 }
 
 void encoderTurned(){
-      display.clearDisplay();
-    display.display();
+  display.clearDisplay();
     display.setCursor(0,0);
     display.setTextSize(2);
   display.setTextColor(SH110X_WHITE);
   display.println("Value: ");
   display.println(value);
-  display.display();
 }
+
 
 void buttonPressed(){
   display.display();
@@ -67,8 +68,7 @@ void buttonPressed(){
   display.println("CH1: ");
   display.println("CH2: ");
   display.println("CH3: ");
-  display.display();
-  display.clearDisplay();
+
 }
 void setup()
 {
@@ -77,16 +77,31 @@ void setup()
       delay(250); // wait for the OLED to power up
   display.begin(i2c_Address, true); // Address 0x3C default
  //display.setContrast (0); // dim display
- 
+ pinMode(switch, INPUT_PULLUP);
+ pinMode(gnd, OUTPUT);
+ digitalWrite(gnd, LOW);
   display.display();
     rotaryEncoder.begin();
     rotaryEncoder.setup(readEncoderISR);
     rotaryEncoder.setBoundaries(0, 127, false); //minValue, maxValue, circleValues true|false (when max go to min and vice versa)
     rotaryEncoder.setAcceleration(100);
+
+    if (rotaryEncoder.isEncoderButtonClicked())
+    {
+      display.clearDisplay();
+      display.display();
+      display.setCursor(0,0);
+      display.setTextSize(2);
+      display.println("startupMenu");
+      delay(1000);
+
+    }
 }
 
 void loop()
 {
+   stateSwitch = digitalRead(switch);
+   display.display();
     if (rotaryEncoder.encoderChanged())
     {
         encoderTurned();
@@ -95,4 +110,10 @@ void loop()
     {
         buttonPressed();
     }
+
+    if (!stateSwitch && stateSwitch == false){
+stateSwitch = !stateSwitch; 
+
+    }
+ 
 }
