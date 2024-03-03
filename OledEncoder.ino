@@ -79,36 +79,26 @@ void setup()
   display.begin(i2c_Address, true); // Address 0x3C default
  //display.setContrast (0); // dim display
  display.display(); // show splashscreen
+ delay(2000);
  pinMode(switch, INPUT_PULLUP);
  pinMode(gnd, OUTPUT);
  digitalWrite(gnd, LOW);
-
+display.clearDisplay();
+display.setTextSize(1);
+display.setTextColor(SH110X_WHITE);
+display.setCursor(0, 0);
+display.println("SETUP"); 
+display.display();
+delay(1000);
 rotaryEncoder.begin();
 rotaryEncoder.setup(readEncoderISR);
 rotaryEncoder.setBoundaries(0, 127, false); //minValue, maxValue, circleValues true|false (when max go to min and vice versa)
 rotaryEncoder.setAcceleration(100);
 
-//display.clearDisplay();
-display.setCursor(0,0);
-display.setTextSize(2);
-display.println("SETUP{}");
-display.display();  
-delay(1000);
-
-
-    if (rotaryEncoder.isEncoderButtonClicked())
-    {
-      display.clearDisplay();
-      display.display();
-      display.setCursor(0,0);
-      display.setTextSize(2);
-      display.println("startupMenu");
-      delay(1000);
-    }
 }
 
 void loop()
-{
+{ 
    stateSwitch = digitalRead(switch);
    display.display();
     if (rotaryEncoder.encoderChanged())
