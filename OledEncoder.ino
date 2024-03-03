@@ -78,6 +78,7 @@ void setup()
       delay(250); // wait for the OLED to power up
   display.begin(i2c_Address, true); // Address 0x3C default
  //display.setContrast (0); // dim display
+ display.display(); // show splashscreen
  pinMode(switch, INPUT_PULLUP);
  pinMode(gnd, OUTPUT);
  digitalWrite(gnd, LOW);
@@ -87,14 +88,14 @@ rotaryEncoder.setup(readEncoderISR);
 rotaryEncoder.setBoundaries(0, 127, false); //minValue, maxValue, circleValues true|false (when max go to min and vice versa)
 rotaryEncoder.setAcceleration(100);
 
-display.clearDisplay();
+//display.clearDisplay();
 display.setCursor(0,0);
 display.setTextSize(2);
 display.println("SETUP{}");
 display.display();  
 delay(1000);
 
-display.clearDisplay();
+
     if (rotaryEncoder.isEncoderButtonClicked())
     {
       display.clearDisplay();
@@ -103,16 +104,11 @@ display.clearDisplay();
       display.setTextSize(2);
       display.println("startupMenu");
       delay(1000);
-
     }
 }
 
 void loop()
 {
-  //display.clearDisplay();
-display.setCursor(0,0);
-display.setTextSize(2);
-display.println("loop{}"); 
    stateSwitch = digitalRead(switch);
    display.display();
     if (rotaryEncoder.encoderChanged())
