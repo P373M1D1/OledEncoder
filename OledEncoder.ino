@@ -47,29 +47,30 @@ void IRAM_ATTR readEncoderISR()
 
 void encoderTurned(){
   display.clearDisplay();
-    display.setCursor(0,0);
-    display.setTextSize(2);
+  display.setCursor(0,0);
+  display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   display.println("Value: ");
   display.println(value);
 }
 
 
-void buttonPressed(){
-  display.display();
+void encoderPressed(){
   display.clearDisplay();
   Serial.print("ButtonPressed");
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
   display.setCursor(0, 0);
-  display.println("MIDI randomiser ");
-  display.setTextSize(2);
-  display.setTextColor(SH110X_WHITE);
-  display.println("CH1: ");
-  display.println("CH2: ");
-  display.println("CH3: ");
-
+  display.println("Encoder pressed   ");
 }
+void buttonPressed(){
+  display.clearDisplay(); 
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.setCursor(0, 0);
+  display.println("Button pressed");
+}
+
 void setup()
 {
   display.setRotation(2);
@@ -80,12 +81,20 @@ void setup()
  pinMode(switch, INPUT_PULLUP);
  pinMode(gnd, OUTPUT);
  digitalWrite(gnd, LOW);
-  display.display();
-    rotaryEncoder.begin();
-    rotaryEncoder.setup(readEncoderISR);
-    rotaryEncoder.setBoundaries(0, 127, false); //minValue, maxValue, circleValues true|false (when max go to min and vice versa)
-    rotaryEncoder.setAcceleration(100);
 
+rotaryEncoder.begin();
+rotaryEncoder.setup(readEncoderISR);
+rotaryEncoder.setBoundaries(0, 127, false); //minValue, maxValue, circleValues true|false (when max go to min and vice versa)
+rotaryEncoder.setAcceleration(100);
+
+display.clearDisplay();
+display.setCursor(0,0);
+display.setTextSize(2);
+display.println("SETUP{}");
+display.display();  
+delay(1000);
+
+display.clearDisplay();
     if (rotaryEncoder.isEncoderButtonClicked())
     {
       display.clearDisplay();
@@ -100,6 +109,10 @@ void setup()
 
 void loop()
 {
+  //display.clearDisplay();
+display.setCursor(0,0);
+display.setTextSize(2);
+display.println("loop{}"); 
    stateSwitch = digitalRead(switch);
    display.display();
     if (rotaryEncoder.encoderChanged())
@@ -108,12 +121,12 @@ void loop()
     }
     if (rotaryEncoder.isEncoderButtonClicked())
     {
-        buttonPressed();
+        encoderPressed();
     }
 
-    if (!stateSwitch && stateSwitch == false){
-stateSwitch = !stateSwitch; 
-
+    if (!stateSwitch && lastStateSwitch == true){
+      if (stateSwitch == LOW);
+      buttonPressed();
     }
- 
+ lastStateSwitch = stateSwitch; 
 }
