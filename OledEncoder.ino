@@ -31,7 +31,6 @@ Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 
 #define DELTAY 2
 #define switch 27
 #define gnd 14
-
 #define LOGO16_GLCD_HEIGHT 16
 #define LOGO16_GLCD_WIDTH  16
 AiEsp32RotaryEncoder rotaryEncoder = AiEsp32RotaryEncoder(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, -1, ROTARY_ENCODER_STEPS);
@@ -39,6 +38,8 @@ byte value;
 const bool displayCleared = false;
 bool stateSwitch = true;
 bool lastStateSwitch = true;
+int midiChannel[16];
+
 void IRAM_ATTR readEncoderISR()
 {
     rotaryEncoder.readEncoder_ISR();
@@ -74,12 +75,17 @@ void buttonPressed(){
 void setup()
 {
   display.setRotation(2);
-    Serial.begin(115200);
-      delay(250); // wait for the OLED to power up
+  Serial.begin(115200);
+  delay(250); // wait for the OLED to power up
   display.begin(i2c_Address, true); // Address 0x3C default
  //display.setContrast (0); // dim display
  display.display(); // show splashscreen
  delay(2000);
+
+for (int i = 1; i < 17; i++){   // Set all midi channels to value 0
+  midiChannel[i] = 0;
+}
+
  pinMode(switch, INPUT_PULLUP);
  pinMode(gnd, OUTPUT);
  digitalWrite(gnd, LOW);
