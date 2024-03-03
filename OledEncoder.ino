@@ -94,7 +94,8 @@ rotaryEncoder.begin();
 rotaryEncoder.setup(readEncoderISR);
 rotaryEncoder.setBoundaries(0, 127, false); //minValue, maxValue, circleValues true|false (when max go to min and vice versa)
 rotaryEncoder.setAcceleration(100);
-
+//screenWash();
+startupMessage();
 }
 
 void loop()
