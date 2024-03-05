@@ -142,7 +142,7 @@ for (int i = 1; i <= 16; i++){
   display.setCursor(0,0);
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
-  display.println("Channel: ");
+  display.print("Channel: ");
   display.println(i);
   display.print("Max Preset: ");
   display.println(settings.channel[i].maxPresetNumber);
