@@ -38,7 +38,18 @@ byte value;
 const bool displayCleared = false;
 bool stateSwitch = true;
 bool lastStateSwitch = true;
-int midiChannel[16];
+//int midiChannel[17];
+
+struct midiChannelSettings{
+  struct channelEntry{
+    uint8_t maxPresetNumber;
+    uint8_t midiCCactive;
+    uint8_t activeValue;
+    uint8_t bypassValue;
+  }
+  channel[17];  
+  };
+
 
 void IRAM_ATTR readEncoderISR()
 {
@@ -81,11 +92,6 @@ void setup()
  //display.setContrast (0); // dim display
  display.display(); // show splashscreen
  delay(2000);
-
-for (int i = 1; i < 17; i++){   // Set all midi channels to value 0
-  midiChannel[i] = 0;
-}
-
  pinMode(switch, INPUT_PULLUP);
  pinMode(gnd, OUTPUT);
  digitalWrite(gnd, LOW);
@@ -106,6 +112,15 @@ startupMessage();
 
 void loop()
 { 
+  midiChannelSettings settings;
+
+  for (int i = 1; i < 17; i++){
+    settings.channel[i].maxPresetNumber = 127;
+    settings.channel[i].midiCCactive = 1;
+    settings.channel[i].activeValue = 127;
+    settings.channel[i].bypassValue = 0;
+  }
+
    stateSwitch = digitalRead(switch);
    display.display();
     if (rotaryEncoder.encoderChanged())
@@ -122,4 +137,23 @@ void loop()
       buttonPressed();
     }
  lastStateSwitch = stateSwitch; 
+for (int i = 1; i <= 16; i++){
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.setTextSize(1);
+  display.setTextColor(SH110X_WHITE);
+  display.println("Channel: ");
+  display.println(i);
+  display.print("Max Preset: ");
+  display.println(settings.channel[i].maxPresetNumber);
+  display.print("ToggleActiveCC: ");
+  display.println(settings.channel[i].midiCCactive);
+  display.print("ActiveValue: ");
+  display.println(settings.channel[i].activeValue);
+  display.print("BypassValue: ");
+  display.println(settings.channel[i].bypassValue);
+  display.display();
+  delay(1000);
+
+}
 }
